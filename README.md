@@ -121,7 +121,7 @@ Payload example:
 ### 4️⃣ Saved ZIP Codes Screen
 - Create a separate screen/page that displays the **saved ZIP Codes for the current user**.
 - Retrieve them using:
-``
+```
 GET https://glaziersonline.com:3210/api-dev/zip-codes/user/{userId}
 ```
 
@@ -133,7 +133,7 @@ On the saved ZIP Codes screen, the user must be able to:
 - ✏️ Edit a saved ZIP Code
 - 🗑 Delete a ZIP Code
 - 📋 View the list in a **table**
-- 📄 Use **pagination** (limit & offset or page-based)
+- 📄 Use **pagination** (page & per page or page-based)
 
 Required endpoints:
 ```
@@ -149,14 +149,12 @@ DELETE https://glaziersonline.com:3210/api-dev/zip-codes/{id}
 - Persistent user identification using localStorage
 - Correct usage of the provided API token
 - Clean, readable, and maintainable code
-- Any modern frontend framework is allowed (React, Vue, Svelte, etc.)
 
 ---
 
 ## ⭐ Bonus (Optional)
 - Avoid duplicate ZIP Codes per user
 - Optimistic UI updates
-- Basic unit tests
 - Responsive layout
 
 ---
