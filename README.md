@@ -166,5 +166,11 @@ DELETE https://glaziersonline.com:3210/api-dev/zip-codes/{id}
 
 ---
 
+To test the API endpoints, you can use tools like Postman or curl. Use this endpoint to check the API status:
+```
+GET https://glaziersonline.com:3210/api-dev/zip-codes/health
+```
+Don't forget to include the `Authorization` header with your API token.
+
 Good luck, and happy coding!
 
