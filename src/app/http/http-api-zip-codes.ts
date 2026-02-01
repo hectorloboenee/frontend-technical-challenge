@@ -1,16 +1,21 @@
-import type {HttpAxios} from "../../common/http/http-axios.ts";
+import {HttpAxios} from "../../common/http/http-axios.ts";
 import urlJoin from "url-join";
 import {headerApplicationJson} from "../../common/http/headers/header-application-json.ts";
+import {errorInterceptor} from "./interceptors/error-interceptor.ts";
 
-export class HttpApiZipCodes implements HttpAxios {
+export class HttpApiZipCodes extends HttpAxios {
     constructor() {
         const apiZipCodes = import.meta.env.VITE_BASE_URL_API_ZIP_CODE;
         super({
-            baseUrl: urlJoin(apiZipCodes, 'us'),
+            baseURL: urlJoin(apiZipCodes, 'us'),
             headers: {
                 ...headerApplicationJson
             }
         })
+    }
+
+    configureInterceptors(): void {
+        errorInterceptor(this.service)
     }
 }
 

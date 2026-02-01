@@ -1,11 +1,9 @@
 import App from "./App.vue";
-import {createMemoryHistory, createRouter, type RouteRecordRaw} from "vue-router";
+import {createMemoryHistory, createRouter, createWebHistory, type RouteRecordRaw} from "vue-router";
+import {routes as modulesRoutes} from "./app/routes.ts";
 
 const routes: RouteRecordRaw[] = [
-    {
-        path: '/', component: App
-    }
-
+    ...modulesRoutes
 ]
 
 export const router = createRouter({

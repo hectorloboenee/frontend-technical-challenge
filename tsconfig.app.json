@@ -11,11 +11,12 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    /*----Included----*/
-    "baseUrl": "src",
-    "paths": {
-      "@common/*": ["./common/*"]
-    }
+//    /*----Included----*/
+//    "baseUrl": "src",
+//    "paths": {
+//      "@common/*": ["./common/*"],
+//      "@components/*": ["./components/*"],
+//    }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
