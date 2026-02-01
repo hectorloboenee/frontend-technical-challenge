@@ -1,13 +1,11 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'App'
+  name: 'ZipCodeSearcher',
 })
 </script>
 
 <template>
-  <main>
-    <RouterView />
-  </main>
+
 </template>
 
 <style scoped>
