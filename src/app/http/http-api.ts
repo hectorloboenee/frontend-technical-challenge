@@ -3,6 +3,7 @@ import urlJoin from "url-join";
 import {headerApplicationJson} from "@common/http/headers/header-application-json.ts";
 import {getAuthorizationHeader} from "./headers/get-authorization-header.ts";
 import {errorInterceptor} from "./interceptors/error-interceptor.ts";
+import {isLoadingInterceptor} from "./interceptors/is-loading-interceptor.ts";
 
 export class HttpApplication extends HttpAxios {
     constructor() {
@@ -18,6 +19,7 @@ export class HttpApplication extends HttpAxios {
 
     configureInterceptors(): void {
         errorInterceptor(this.service)
+        isLoadingInterceptor(this.service)
     }
 }
 

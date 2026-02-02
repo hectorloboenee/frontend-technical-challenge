@@ -3,10 +3,11 @@ const props = withDefaults(defineProps<{
   text: string;
   type?: 'button' | 'submit';
   disabled?: boolean;
-  form: string;
+  form?: string;
 }>(), {
   type: 'button',
   disabled: false,
+  form: undefined
 })
 
 const emit = defineEmits<{(e: 'click', event: MouseEvent): void}>();

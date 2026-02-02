@@ -74,7 +74,7 @@ https://api.zippopotam.us/us/90210
   - Country
   - Latitude
   - Longitude
-- Handle loading and error states properly.
+- Handle loading and statusCode states properly.
 
 ---
 
@@ -145,7 +145,7 @@ DELETE https://glaziersonline.com:3210/api-dev/zip-codes/{id}
 
 ## 🧠 Technical Expectations
 - Clear separation between API logic and UI components
-- Proper state management (loading, error, success)
+- Proper state management (loading, statusCode, success)
 - Persistent user identification using localStorage
 - Correct usage of the provided API token
 - Clean, readable, and maintainable code
