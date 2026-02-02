@@ -1,9 +1,9 @@
-import {ref} from 'vue';
+import { ref } from 'vue';
 
 const statusCode = ref<any>(undefined);
 
 export function useStatusCode() {
-    return {statusCode};
+  return { statusCode };
 }
 
-export const statusCodes = [404, 401, 403]
+export const statusCodes = [404, 401, 403];

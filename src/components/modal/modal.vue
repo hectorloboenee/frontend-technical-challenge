@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import { FwbButton, FwbModal } from 'flowbite-vue'
-import Button from "../button/button.vue";
+import { FwbButton, FwbModal } from 'flowbite-vue';
+import Button from '../button/button.vue';
 defineOptions({
-  name: 'Modal'
-})
+  name: 'Modal',
+});
 
-const props = withDefaults(defineProps<{
-  close: () => void;
-  show: () => void;
-  open: boolean;
-  nameForm: string;
-  actionLabel: string;
-  title: string;
-}>(), {
-  open: false
-})
+const props = withDefaults(
+  defineProps<{
+    close: () => void;
+    show: () => void;
+    open: boolean;
+    nameForm: string;
+    actionLabel: string;
+    title: string;
+  }>(),
+  {
+    open: false,
+  },
+);
 </script>
 
 <template>
   <fwb-modal v-if="open" @close="close">
     <template #header>
-      <div class="flex items-center text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-        {{title}}
+      <div
+        class="flex items-center text-lg font-bold tracking-tight text-gray-900 dark:text-white"
+      >
+        {{ title }}
       </div>
     </template>
     <template #body>
@@ -37,6 +42,4 @@ const props = withDefaults(defineProps<{
   </fwb-modal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({
   name: 'Card',
-})
+});
 </script>
 
 <template>
@@ -10,6 +10,4 @@ defineOptions({
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

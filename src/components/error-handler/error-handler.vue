@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({
   name: 'ErrorHandler',
-})
+});
 
 const props = defineProps<{
   statusCode?: number;
@@ -15,6 +15,4 @@ const props = defineProps<{
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
