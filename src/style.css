@@ -48,5 +48,6 @@
 }
 
 .custom-card {
-    @apply block rounded-lg border border-gray-200 shadow-md dark:border-gray-700  bg-white dark:bg-gray-800 w-sm
+    /*@apply block max-w-sm rounded-lg border border-gray-200 shadow-md dark:border-gray-700  bg-white dark:bg-gray-800 w-sm*/
+    @apply block max-w-none rounded-lg border border-gray-200 shadow-md dark:border-gray-700  bg-white dark:bg-gray-800 w-full
 }

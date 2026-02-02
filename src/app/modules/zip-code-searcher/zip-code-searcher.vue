@@ -44,13 +44,13 @@ const saveZipCode = (event) => {
 <template>
   <div class="w-full flex flex-col justify-center items-center space-y-6">
     <div class="w-full grid grid-cols-12 gap-6">
-      <div class="col-span-12 md:col-span-8 md:col-start-4 lg:col-span-8 lg:col-start-4">
+      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
         <Form :validation-schema="validation" @submit="submit" :id="nameForm">
           <div class="flex flex-row space-x-4">
-            <div class="basis-2/3">
+            <div class="basis-3/3">
               <Input name="zipCode" placeholder="Enter zip code" type="text" />
             </div>
-            <div class="basis-1/3">
+            <div class="basis-0/3">
               <Button text="Search" type="submit" :form="nameForm" />
             </div>
           </div>
@@ -58,7 +58,7 @@ const saveZipCode = (event) => {
       </div>
 
 
-      <div class="col-span-12 md:col-span-8 md:col-start-4 lg:col-span-8 lg:col-start-4">
+      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
         <ErrorHandler :statusCode="statusCode" />
         <Card v-if="data && !statusCodes.includes(statusCode)">
           <div>
