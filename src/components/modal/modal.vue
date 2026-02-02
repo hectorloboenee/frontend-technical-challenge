@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FwbButton, FwbModal } from 'flowbite-vue';
+import { FwbModal } from 'flowbite-vue';
 import Button from '../button/button.vue';
 defineOptions({
   name: 'Modal',

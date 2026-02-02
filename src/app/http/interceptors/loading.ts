@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-const isLoading = ref<boolena>(false);
+const isLoading = ref<boolean>(false);
 
 export function useIsLoading() {
   return { isLoading };
