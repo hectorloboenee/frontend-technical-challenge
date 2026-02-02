@@ -11,13 +11,24 @@ import Input from '../../../../components/form/input/input.vue';
 import { useRouter, useRoute } from 'vue-router';
 import type { CreateZipCodeForm } from './common/types/create-zip-code-form.ts';
 import { editZipCode } from './api/edit-zip-code.ts';
+import { deleteZipCode } from './api/delete-zip-code.ts';
 
 defineOptions({
   name: 'ZipCodes',
 });
 const editZipCodeForm = 'edit-zip-code-form';
+const deleteZipCodeForm = 'delete-zip-code-form';
 const openEdit = ref<boolean>(false);
+const openDelete = ref<boolean>(false);
 const zipCodeInitialValues = ref<any>({});
+
+const closeDeleteModal = () => {
+  openDelete.value = false;
+};
+
+const openDeleteModal = () => {
+  openDelete.value = true;
+};
 
 const closeEditModal = () => {
   openEdit.value = false;
@@ -58,7 +69,21 @@ const actions = [
     text: 'Delete',
     color: 'red',
     onClick: (data: any) => {
-      console.log(data);
+      router.push({
+        query: {
+          zipId: data.id,
+        },
+      });
+      openDeleteModal();
+      zipCodeInitialValues.value = {
+        zipCode: data.zipCode,
+        city: data.city,
+        state: data.state,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        country: data.country,
+        observations: data.observations,
+      };
     },
   },
 ];
@@ -116,6 +141,13 @@ const editZipCodeOnSubmit = async (values: CreateZipCodeForm) => {
   zipCodeInitialValues.value = {};
   closeEditModal();
 };
+
+const deleteZipCodeOnSubmit = async (_values: CreateZipCodeForm) => {
+  await deleteZipCode(route.query.zipId);
+  await controller.fetch();
+  zipCodeInitialValues.value = {};
+  closeDeleteModal();
+};
 </script>
 
 <template>
@@ -154,6 +186,69 @@ const editZipCodeOnSubmit = async (values: CreateZipCodeForm) => {
             name="observations"
             placeholder="Enter your observation"
             type="text"
+          />
+        </div>
+      </div>
+    </Form>
+  </Modal>
+
+  <Modal
+    title="Delete"
+    :close="closeDeleteModal"
+    :show="openDeleteModal"
+    :name-form="deleteZipCodeForm"
+    action-label="Delete"
+    :open="openDelete"
+  >
+    <Form
+      :validation-schema="createZipCodeValidations"
+      @submit="deleteZipCodeOnSubmit"
+      :id="deleteZipCodeForm"
+      :initial-values="zipCodeInitialValues"
+    >
+      <div class="flex flex-row space-x-4">
+        <div class="basis-3/3 space-y-2">
+          <Input
+            name="zipCode"
+            placeholder="Enter your name"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="country"
+            placeholder="Enter your country"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="city"
+            placeholder="Enter your city"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="state"
+            placeholder="Enter your state"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="latitude"
+            placeholder="Enter your latitude"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="longitude"
+            placeholder="Enter your longitude"
+            type="text"
+            :readonly="true"
+          />
+          <Input
+            name="observations"
+            placeholder="Enter your observation"
+            type="text"
+            :readonly="true"
           />
         </div>
       </div>
