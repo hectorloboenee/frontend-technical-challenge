@@ -9,7 +9,7 @@ export class HttpApplication extends HttpAxios {
   constructor() {
     const apiUrl = import.meta.env.VITE_BASE_URL_API;
     super({
-      baseURL: urlJoin(apiUrl, 'api-dev/zip-codes'),
+      baseURL: urlJoin(apiUrl, '/api-dev'),
       headers: {
         ...headerApplicationJson,
         ...getAuthorizationHeader(),

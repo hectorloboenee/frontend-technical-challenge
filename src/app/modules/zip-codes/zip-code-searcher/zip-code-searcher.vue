@@ -1,23 +1,27 @@
 <script setup lang="ts">
 import { Form } from 'vee-validate';
-import Input from '../../../components/form/input/input.vue';
-import Button from '../../../components/button/button.vue';
+import Input from '../../../../components/form/input/input.vue';
+import Button from '../../../../components/button/button.vue';
 import { searchValidation, userValidation } from './common/validations.ts';
 import { search } from './api/search.ts';
 import type { ZipCodeApi } from './common/types/zip-code-api.ts';
 import type { ZipCodeDto } from './common/types/zip-code-dto.ts';
-import { useUserStore } from '../user/store/user-store.ts';
-import Card from '../../../components/card/card.vue';
+import { useUserStore } from '../../user/store/user-store.ts';
+import Card from '../../../../components/card/card.vue';
 import { ref } from 'vue';
 import {
   statusCodes,
   useStatusCode,
-} from '../../http/interceptors/status-code.ts';
-import ErrorHandler from '../../../components/error-handler/error-handler.vue';
-import Modal from '../../../components/modal/modal.vue';
-import { createUser } from '../user/api/create-user.ts';
-import type { UserResponseDto } from '../user/common/types/user-response-dto.ts';
-import { createZipCodeValidations } from '../zip-codes/common/validations.ts';
+} from '../../../http/interceptors/status-code.ts';
+import ErrorHandler from '../../../../components/error-handler/error-handler.vue';
+import Modal from '../../../../components/modal/modal.vue';
+import { createUser } from '../../user/api/create-user.ts';
+import type { UserResponseDto } from '../../user/common/types/user-response-dto.ts';
+import { createZipCodeValidations } from '../list-zip-codes/common/validations.ts';
+import type { UserForm } from '../../user/common/types/user-form.ts';
+import type { ZipCodeForm } from './common/types/zip-code-form.ts';
+import type { CreateZipCodeForm } from '../list-zip-codes/common/types/create-zip-code-form.ts';
+import { createZipCode } from '../list-zip-codes/api/create-zip-code.ts';
 
 defineOptions({
   name: 'ZipCodeSearcher',
@@ -32,8 +36,10 @@ const { statusCode } = useStatusCode();
 const openCreateUser = ref<boolean>(false);
 const openCreateZipCode = ref<boolean>(false);
 const zipCodeInitialValues = ref<any>({});
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-const searchZipCode = async (values: { zipCode: number }) => {
+const searchZipCode = async (values: ZipCodeForm) => {
   data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode);
 };
 
@@ -45,11 +51,12 @@ const saveZipCode = event => {
 
   if (userStore.user.id !== undefined) {
     zipCodeInitialValues.value = {
-      zip: data.value?.postCode,
+      zipCode: data.value?.postCode,
       city: data.value?.places[0].placeName,
       state: data.value?.places[0].state,
       latitude: data.value?.places[0].latitude,
       longitude: data.value?.places[0].longitude,
+      country: data.value?.country,
     };
     openCreateZipCodeModal();
   }
@@ -62,7 +69,7 @@ const openCreateUserModal = () => {
   openCreateUser.value = true;
 };
 
-const createUserOnSubmit = async (values: { name: string }) => {
+const createUserOnSubmit = async (values: UserForm) => {
   const response = await createUser<UserResponseDto>(values.name);
   userStore.createUser({
     id: response.id,
@@ -79,8 +86,14 @@ const openCreateZipCodeModal = () => {
   openCreateZipCode.value = true;
 };
 
-const createZipCodeOnSubmit = async (values: any) => {
-  console.log(values);
+const createZipCodeOnSubmit = async (values: CreateZipCodeForm) => {
+  await createZipCode({
+    ...values,
+    userId: userStore.user.id,
+    zipCode: values.zipCode,
+  });
+  await router.push('/zip-codes');
+  closeCreateZipCodeModal();
 };
 </script>
 
@@ -172,7 +185,8 @@ const createZipCodeOnSubmit = async (values: any) => {
     >
       <div class="flex flex-row space-x-4">
         <div class="basis-3/3 space-y-2">
-          <Input name="zip" placeholder="Enter your name" type="text" />
+          <Input name="zipCode" placeholder="Enter your name" type="text" />
+          <Input name="country" placeholder="Enter your country" type="text" />
           <Input name="city" placeholder="Enter your city" type="text" />
           <Input name="state" placeholder="Enter your state" type="text" />
           <Input
