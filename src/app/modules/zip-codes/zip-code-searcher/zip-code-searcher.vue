@@ -43,7 +43,7 @@ const searchZipCode = async (values: ZipCodeForm) => {
   data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode);
 };
 
-const saveZipCode = event => {
+const saveZipCode = (event: any) => {
   event.preventDefault();
   if (userStore.user.id === undefined) {
     openCreateUserModal();
