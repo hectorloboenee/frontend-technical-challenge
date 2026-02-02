@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import {
-  FwbButton,
-  FwbNavbar,
-  FwbNavbarCollapse,
-  FwbNavbarLink,
-  FwbNavbarLogo,
-} from 'flowbite-vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { useUserStore } from './app/modules/user/store/user-store.ts';
+import Overlay from './components/overlay/overlay.vue';
 
 defineOptions({
   name: 'App',
@@ -52,6 +46,8 @@ const userStore = useUserStore();
   <main class="p-2">
     <RouterView />
   </main>
+
+  <Overlay />
 </template>
 
 <style scoped></style>
