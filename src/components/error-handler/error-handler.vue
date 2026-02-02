@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <div>
-    <strong v-if="statusCode == 404">Post code not found</strong>
+    <strong v-if="statusCode == 404">Zip code not found</strong>
     <strong v-else></strong>
   </div>
 </template>

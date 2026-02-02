@@ -2,7 +2,7 @@
 import {Form} from "vee-validate";
 import Input from "../../../components/form/input/input.vue";
 import Button from "../../../components/button/button.vue";
-import {validation} from './common/validations.ts'
+import {searchValidation, userValidation} from './common/validations.ts'
 import {search} from "./api/search.ts";
 import type {ZipCodeApi} from "./common/types/zip-code-api.ts";
 import type {ZipCodeDto} from "./common/types/zip-code-dto.ts";
@@ -11,6 +11,9 @@ import Card from "../../../components/card/card.vue";
 import {ref} from "vue";
 import {statusCodes, useStatusCode} from "../../http/interceptors/status-code.ts";
 import ErrorHandler from "../../../components/error-handler/error-handler.vue";
+import Modal from "../../../components/modal/modal.vue";
+import {createUser} from "../user/api/create-user.ts";
+import {UserResponseDto} from "../user/common/types/user-response-dto.ts"
 
 defineOptions({
   name: 'ZipCodeSearcher',
@@ -18,39 +21,50 @@ defineOptions({
 
 const userStore = useUserStore();
 const nameForm = 'zip-code-searcher-form';
+const createUserNameForm = 'create-user-name-form'
 const data = ref<ZipCodeDto | undefined>(undefined);
 const {statusCode} = useStatusCode();
+const open = ref(false)
 
-const createUser = () => {
-  userStore.createUser({
-    id: 'user-1',
-    name: 'Hector'
-  })
-}
-
-const submit = async (values: {zipCode: number}) => {
+const searchZipCode = async (values: {zipCode: number}) => {
   data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode)
-  // createUser()
 }
 
 const saveZipCode = (event) => {
   event.preventDefault();
   if (userStore.user.id == null) {
-    alert('User ID is missing')
+    openModal();
   }
+}
+
+function closeModal () {
+  open.value = false
+}
+function openModal () {
+  open.value = true
+}
+
+const createUserOnSubmit = async (values: {name: string;}) => {
+  const response = await createUser<UserResponseDto>(values.name)
+  userStore.createUser({
+    id: response.id,
+    name: response.name,
+    uuid: response.uuid,
+  })
+  closeModal();
 }
 </script>
 
 <template>
   <div class="w-full flex flex-col justify-center items-center space-y-6">
     <div class="w-full grid grid-cols-12 gap-6">
-      <div class="col-span-12 md:col-span-8 md:col-start-4 lg:col-span-8 lg:col-start-4">
-        <Form :validation-schema="validation" @submit="submit" :id="nameForm">
+      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
+        <Form :validation-schema="searchValidation" @submit="searchZipCode" :id="nameForm">
           <div class="flex flex-row space-x-4">
-            <div class="basis-2/3">
+            <div class="basis-3/3">
               <Input name="zipCode" placeholder="Enter zip code" type="text" />
             </div>
-            <div class="basis-1/3">
+            <div class="basis-0/3">
               <Button text="Search" type="submit" :form="nameForm" />
             </div>
           </div>
@@ -58,18 +72,18 @@ const saveZipCode = (event) => {
       </div>
 
 
-      <div class="col-span-12 md:col-span-8 md:col-start-4 lg:col-span-8 lg:col-start-4">
+      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
         <ErrorHandler :statusCode="statusCode" />
         <Card v-if="data && !statusCodes.includes(statusCode)">
           <div>
             <div class="p-5 space-y-6">
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{data.postCode}}</h5>
+              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Zip Code: {{data.postCode}}</h5>
               <p class="font-normal text-gray-700 dark:text-gray-400">
-                <strong>City: {{data.places[0].placeName}}</strong><br />
-                <strong>State: {{data.places[0].state}}</strong><br />
-                <strong>Country: {{data.country}}</strong><br />
-                <strong>Country: {{data.places[0].latitude}}</strong><br />
-                <strong>Country: {{data.places[0].longitude}}</strong><br />
+                <strong>City: </strong>{{data.places[0].placeName}}<br />
+                <strong>State: </strong>{{data.places[0].state}}<br />
+                <strong>Country: </strong>{{data.country}}<br />
+                <strong>Latitude: </strong>{{data.places[0].latitude}}<br />
+                <strong>Longitude: </strong>{{data.places[0].longitude}}<br />
               </p>
               <div class="flex justify-end">
                 <Button text="Add" @click="saveZipCode" />
@@ -81,9 +95,15 @@ const saveZipCode = (event) => {
     </div>
   </div>
 
-<!--  <div class="w-full flex flex-col justify-center items-center">-->
-<!--    -->
-<!--  </div>-->
+<Modal :close="closeModal" :show="openModal" :open="open" :nameForm="createUserNameForm" actionLabel="Add" title="Create user">
+  <Form :validation-schema="userValidation" @submit="createUserOnSubmit" :id="createUserNameForm">
+    <div class="flex flex-row space-x-4">
+      <div class="basis-3/3">
+        <Input name="name" placeholder="Enter your name" type="text" />
+      </div>
+    </div>
+  </Form>
+</Modal>
 </template>
 
 <style scoped>

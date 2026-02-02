@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import {FwbNavbar, FwbNavbarCollapse, FwbNavbarLink, FwbNavbarLogo} from "flowbite-vue";
+import {FwbButton, FwbNavbar, FwbNavbarCollapse, FwbNavbarLink, FwbNavbarLogo} from "flowbite-vue";
 import {RouterLink, RouterView} from "vue-router";
+import {useUserStore} from "./app/modules/user/store/user-store.ts";
 
 defineOptions({
   name: 'App'
 })
+
+const userStore = useUserStore();
+
 </script>
 
 <template>
@@ -19,6 +23,11 @@ defineOptions({
           <li>
             <RouterLink class="custom-navbar-menu-item" to="/zip-code-searcher">
               Zip code searcher
+            </RouterLink>
+          </li>
+          <li v-if="userStore.user.id !== undefined">
+            <RouterLink class="custom-navbar-menu-item" @click="userStore.logout()" to="#">
+              Logout ({{userStore.user.name}})
             </RouterLink>
           </li>
         </ul>
