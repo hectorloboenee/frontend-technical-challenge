@@ -33,7 +33,7 @@ const userStore = useUserStore();
             <RouterLink
               class="custom-navbar-menu-item"
               @click="userStore.logout()"
-              to="#"
+              to="/"
             >
               Logout ({{ userStore.user.name }})
             </RouterLink>
