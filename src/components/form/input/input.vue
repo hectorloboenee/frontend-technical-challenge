@@ -6,6 +6,7 @@ const props = defineProps<{
   label?: string;
   type?: string;
   placeholder?: string;
+  readonly?: boolean;
 }>();
 
 defineOptions({
@@ -29,6 +30,7 @@ const { value, errorMessage } = useField(props.name);
         :type="type ?? 'text'"
         :name="name"
         v-model="value"
+        :disabled="readonly"
       />
     </div>
     <p v-if="errorMessage" class="text-red-600 text-sm mt-1">
