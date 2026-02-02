@@ -1,65 +1,100 @@
 <script setup lang="ts">
-import {Form} from "vee-validate";
-import Input from "../../../components/form/input/input.vue";
-import Button from "../../../components/button/button.vue";
-import {searchValidation, userValidation} from './common/validations.ts'
-import {search} from "./api/search.ts";
-import type {ZipCodeApi} from "./common/types/zip-code-api.ts";
-import type {ZipCodeDto} from "./common/types/zip-code-dto.ts";
-import {useUserStore} from "../user/store/user-store.ts";
-import Card from "../../../components/card/card.vue";
-import {ref} from "vue";
-import {statusCodes, useStatusCode} from "../../http/interceptors/status-code.ts";
-import ErrorHandler from "../../../components/error-handler/error-handler.vue";
-import Modal from "../../../components/modal/modal.vue";
-import {createUser} from "../user/api/create-user.ts";
-import {UserResponseDto} from "../user/common/types/user-response-dto.ts"
+import { Form } from 'vee-validate';
+import Input from '../../../components/form/input/input.vue';
+import Button from '../../../components/button/button.vue';
+import { searchValidation, userValidation } from './common/validations.ts';
+import { search } from './api/search.ts';
+import type { ZipCodeApi } from './common/types/zip-code-api.ts';
+import type { ZipCodeDto } from './common/types/zip-code-dto.ts';
+import { useUserStore } from '../user/store/user-store.ts';
+import Card from '../../../components/card/card.vue';
+import { ref } from 'vue';
+import {
+  statusCodes,
+  useStatusCode,
+} from '../../http/interceptors/status-code.ts';
+import ErrorHandler from '../../../components/error-handler/error-handler.vue';
+import Modal from '../../../components/modal/modal.vue';
+import { createUser } from '../user/api/create-user.ts';
+import type { UserResponseDto } from '../user/common/types/user-response-dto.ts';
+import { createZipCodeValidations } from '../zip-codes/common/validations.ts';
 
 defineOptions({
   name: 'ZipCodeSearcher',
-})
+});
 
 const userStore = useUserStore();
 const nameForm = 'zip-code-searcher-form';
-const createUserNameForm = 'create-user-name-form'
+const createUserNameForm = 'create-user-name-form';
+const createZipCodeForm = 'create-zip-code-form';
 const data = ref<ZipCodeDto | undefined>(undefined);
-const {statusCode} = useStatusCode();
-const open = ref(false)
+const { statusCode } = useStatusCode();
+const openCreateUser = ref<boolean>(false);
+const openCreateZipCode = ref<boolean>(false);
+const zipCodeInitialValues = ref<any>({});
 
-const searchZipCode = async (values: {zipCode: number}) => {
-  data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode)
-}
+const searchZipCode = async (values: { zipCode: number }) => {
+  data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode);
+};
 
-const saveZipCode = (event) => {
+const saveZipCode = event => {
   event.preventDefault();
-  if (userStore.user.id == null) {
-    openModal();
+  if (userStore.user.id === undefined) {
+    openCreateUserModal();
   }
-}
 
-function closeModal () {
-  open.value = false
-}
-function openModal () {
-  open.value = true
-}
+  if (userStore.user.id !== undefined) {
+    zipCodeInitialValues.value = {
+      zip: data.value?.postCode,
+      city: data.value?.places[0].placeName,
+      state: data.value?.places[0].state,
+      latitude: data.value?.places[0].latitude,
+      longitude: data.value?.places[0].longitude,
+    };
+    openCreateZipCodeModal();
+  }
+};
 
-const createUserOnSubmit = async (values: {name: string;}) => {
-  const response = await createUser<UserResponseDto>(values.name)
+const closeCreateUserModal = () => {
+  openCreateUser.value = false;
+};
+const openCreateUserModal = () => {
+  openCreateUser.value = true;
+};
+
+const createUserOnSubmit = async (values: { name: string }) => {
+  const response = await createUser<UserResponseDto>(values.name);
   userStore.createUser({
     id: response.id,
     name: response.name,
     uuid: response.uuid,
-  })
-  closeModal();
-}
+  });
+  closeCreateUserModal();
+};
+
+const closeCreateZipCodeModal = () => {
+  openCreateZipCode.value = false;
+};
+const openCreateZipCodeModal = () => {
+  openCreateZipCode.value = true;
+};
+
+const createZipCodeOnSubmit = async (values: any) => {
+  console.log(values);
+};
 </script>
 
 <template>
   <div class="w-full flex flex-col justify-center items-center space-y-6">
     <div class="w-full grid grid-cols-12 gap-6">
-      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
-        <Form :validation-schema="searchValidation" @submit="searchZipCode" :id="nameForm">
+      <div
+        class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5"
+      >
+        <Form
+          :validation-schema="searchValidation"
+          @submit="searchZipCode"
+          :id="nameForm"
+        >
           <div class="flex flex-row space-x-4">
             <div class="basis-3/3">
               <Input name="zipCode" placeholder="Enter zip code" type="text" />
@@ -71,19 +106,24 @@ const createUserOnSubmit = async (values: {name: string;}) => {
         </Form>
       </div>
 
-
-      <div class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5">
+      <div
+        class="col-span-12 md:col-span-4 md:col-start-5 lg:col-span-4 lg:col-start-5"
+      >
         <ErrorHandler :statusCode="statusCode" />
         <Card v-if="data && !statusCodes.includes(statusCode)">
           <div>
             <div class="p-5 space-y-6">
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Zip Code: {{data.postCode}}</h5>
+              <h5
+                class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+              >
+                Zip Code: {{ data.postCode }}
+              </h5>
               <p class="font-normal text-gray-700 dark:text-gray-400">
-                <strong>City: </strong>{{data.places[0].placeName}}<br />
-                <strong>State: </strong>{{data.places[0].state}}<br />
-                <strong>Country: </strong>{{data.country}}<br />
-                <strong>Latitude: </strong>{{data.places[0].latitude}}<br />
-                <strong>Longitude: </strong>{{data.places[0].longitude}}<br />
+                <strong>City: </strong>{{ data.places[0].placeName }}<br />
+                <strong>State: </strong>{{ data.places[0].state }}<br />
+                <strong>Country: </strong>{{ data.country }}<br />
+                <strong>Latitude: </strong>{{ data.places[0].latitude }}<br />
+                <strong>Longitude: </strong>{{ data.places[0].longitude }}<br />
               </p>
               <div class="flex justify-end">
                 <Button text="Add" @click="saveZipCode" />
@@ -95,17 +135,65 @@ const createUserOnSubmit = async (values: {name: string;}) => {
     </div>
   </div>
 
-<Modal :close="closeModal" :show="openModal" :open="open" :nameForm="createUserNameForm" actionLabel="Add" title="Create user">
-  <Form :validation-schema="userValidation" @submit="createUserOnSubmit" :id="createUserNameForm">
-    <div class="flex flex-row space-x-4">
-      <div class="basis-3/3">
-        <Input name="name" placeholder="Enter your name" type="text" />
+  <Modal
+    :close="closeCreateUserModal"
+    :show="openCreateUserModal"
+    :open="openCreateUser"
+    :nameForm="createUserNameForm"
+    actionLabel="Add"
+    title="Create user"
+  >
+    <Form
+      :validation-schema="userValidation"
+      @submit="createUserOnSubmit"
+      :id="createUserNameForm"
+    >
+      <div class="flex flex-row space-x-4">
+        <div class="basis-3/3">
+          <Input name="name" placeholder="Enter your name" type="text" />
+        </div>
       </div>
-    </div>
-  </Form>
-</Modal>
+    </Form>
+  </Modal>
+
+  <Modal
+    title="Add zip code"
+    :close="closeCreateZipCodeModal"
+    :show="openCreateZipCodeModal"
+    :name-form="createZipCodeForm"
+    action-label="Add"
+    :open="openCreateZipCode"
+  >
+    <Form
+      :validation-schema="createZipCodeValidations"
+      @submit="createZipCodeOnSubmit"
+      :id="createZipCodeForm"
+      :initial-values="zipCodeInitialValues"
+    >
+      <div class="flex flex-row space-x-4">
+        <div class="basis-3/3 space-y-2">
+          <Input name="zip" placeholder="Enter your name" type="text" />
+          <Input name="city" placeholder="Enter your city" type="text" />
+          <Input name="state" placeholder="Enter your state" type="text" />
+          <Input
+            name="latitude"
+            placeholder="Enter your latitude"
+            type="text"
+          />
+          <Input
+            name="longitude"
+            placeholder="Enter your longitude"
+            type="text"
+          />
+          <Input
+            name="observations"
+            placeholder="Enter your observation"
+            type="text"
+          />
+        </div>
+      </div>
+    </Form>
+  </Modal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,12 +1,14 @@
-import App from "./App.vue";
-import {createMemoryHistory, createRouter, type RouteRecordRaw} from "vue-router";
-import {routes as modulesRoutes} from "./app/routes.ts";
+import App from './App.vue';
+import {
+  createMemoryHistory,
+  createRouter,
+  type RouteRecordRaw,
+} from 'vue-router';
+import { routes as modulesRoutes } from './app/routes.ts';
 
-const routes: RouteRecordRaw[] = [
-    ...modulesRoutes
-]
+const routes: RouteRecordRaw[] = [...modulesRoutes];
 
 export const router = createRouter({
-    history: createMemoryHistory(),
-    routes,
-})
+  history: createMemoryHistory(),
+  routes,
+});

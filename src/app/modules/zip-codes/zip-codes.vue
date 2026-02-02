@@ -1,9 +1,11 @@
 <script setup lang="ts">
 defineOptions({
-  name: 'Home',
+  name: 'ZipCodes',
 });
 </script>
 
-<template></template>
+<template>
+  <strong>zip codes</strong>
+</template>
 
 <style scoped></style>
