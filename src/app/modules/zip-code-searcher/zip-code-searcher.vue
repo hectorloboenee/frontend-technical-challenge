@@ -16,7 +16,8 @@ import {
 import ErrorHandler from '../../../components/error-handler/error-handler.vue';
 import Modal from '../../../components/modal/modal.vue';
 import { createUser } from '../user/api/create-user.ts';
-import { UserResponseDto } from '../user/common/types/user-response-dto.ts';
+import type { UserResponseDto } from '../user/common/types/user-response-dto.ts';
+import { createZipCodeValidations } from '../zip-codes/common/validations.ts';
 
 defineOptions({
   name: 'ZipCodeSearcher',
@@ -30,6 +31,7 @@ const data = ref<ZipCodeDto | undefined>(undefined);
 const { statusCode } = useStatusCode();
 const openCreateUser = ref<boolean>(false);
 const openCreateZipCode = ref<boolean>(false);
+const zipCodeInitialValues = ref<any>({});
 
 const searchZipCode = async (values: { zipCode: number }) => {
   data.value = await search<ZipCodeApi, ZipCodeDto>(values.zipCode);
@@ -37,8 +39,19 @@ const searchZipCode = async (values: { zipCode: number }) => {
 
 const saveZipCode = event => {
   event.preventDefault();
-  if (userStore.user.id == null) {
+  if (userStore.user.id === undefined) {
     openCreateUserModal();
+  }
+
+  if (userStore.user.id !== undefined) {
+    zipCodeInitialValues.value = {
+      zip: data.value?.postCode,
+      city: data.value?.places[0].placeName,
+      state: data.value?.places[0].state,
+      latitude: data.value?.places[0].latitude,
+      longitude: data.value?.places[0].longitude,
+    };
+    openCreateZipCodeModal();
   }
 };
 
@@ -149,15 +162,34 @@ const createZipCodeOnSubmit = async (values: any) => {
     :show="openCreateZipCodeModal"
     :name-form="createZipCodeForm"
     action-label="Add"
+    :open="openCreateZipCode"
   >
     <Form
-      :validation-schema="userValidation"
+      :validation-schema="createZipCodeValidations"
       @submit="createZipCodeOnSubmit"
       :id="createZipCodeForm"
+      :initial-values="zipCodeInitialValues"
     >
       <div class="flex flex-row space-x-4">
-        <div class="basis-3/3">
-          <Input name="name" placeholder="Enter your name" type="text" />
+        <div class="basis-3/3 space-y-2">
+          <Input name="zip" placeholder="Enter your name" type="text" />
+          <Input name="city" placeholder="Enter your city" type="text" />
+          <Input name="state" placeholder="Enter your state" type="text" />
+          <Input
+            name="latitude"
+            placeholder="Enter your latitude"
+            type="text"
+          />
+          <Input
+            name="longitude"
+            placeholder="Enter your longitude"
+            type="text"
+          />
+          <Input
+            name="observations"
+            placeholder="Enter your observation"
+            type="text"
+          />
         </div>
       </div>
     </Form>

@@ -31,6 +31,11 @@ const userStore = useUserStore();
             </RouterLink>
           </li>
           <li v-if="userStore.user.id !== undefined">
+            <RouterLink class="custom-navbar-menu-item" to="/zip-codes">
+              Zip codes
+            </RouterLink>
+          </li>
+          <li v-if="userStore.user.id !== undefined">
             <RouterLink
               class="custom-navbar-menu-item"
               @click="userStore.logout()"
