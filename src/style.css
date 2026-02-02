@@ -50,7 +50,3 @@
 .custom-card {
   @apply block max-w-none rounded-lg border border-gray-200 shadow-md dark:border-gray-700  bg-white dark:bg-gray-800 w-full;
 }
-
-.fwb-pagination > div {
-    @apply inline-flex flex w-full justify-items-end;
-}

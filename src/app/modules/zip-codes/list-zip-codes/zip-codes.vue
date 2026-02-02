@@ -1,13 +1,34 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import Table from '../../../../components/table/table.vue';
 import type { Column } from '../../../../components/table/types/column.ts';
 import { useUserStore } from '../../user/store/user-store.ts';
 import { useRetriveZipCodes } from './api/use-retrive-zip-codes.ts';
+import Modal from '../../../../components/modal/modal.vue';
+import { createZipCodeValidations } from './common/validations.ts';
+import { Form } from 'vee-validate';
+import Input from '../../../../components/form/input/input.vue';
+import { useRouter, useRoute } from 'vue-router';
+import type { CreateZipCodeForm } from './common/types/create-zip-code-form.ts';
+import { editZipCode } from './api/edit-zip-code.ts';
 
 defineOptions({
   name: 'ZipCodes',
 });
+const editZipCodeForm = 'edit-zip-code-form';
+const openEdit = ref<boolean>(false);
+const zipCodeInitialValues = ref<any>({});
+
+const closeEditModal = () => {
+  openEdit.value = false;
+};
+
+const openEditModal = () => {
+  openEdit.value = true;
+};
+
+const router = useRouter();
+const route = useRoute();
 
 const userStore = useUserStore();
 const actions = [
@@ -15,7 +36,21 @@ const actions = [
     text: 'Edit',
     color: 'default',
     onClick: (data: any) => {
-      console.log(data);
+      router.push({
+        query: {
+          zipId: data.id,
+        },
+      });
+      openEditModal();
+      zipCodeInitialValues.value = {
+        zipCode: data.zipCode,
+        city: data.city,
+        state: data.state,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        country: data.country,
+        observations: data.observations,
+      };
     },
   },
 
@@ -68,10 +103,62 @@ const controller = useRetriveZipCodes(userStore.user.id as number);
 onMounted(() => {
   controller.fetch();
 });
+
+const editZipCodeOnSubmit = async (values: CreateZipCodeForm) => {
+  const payload = {
+    ...values,
+    id: route.query.zipId,
+    userId: userStore.user.id,
+  };
+
+  await editZipCode(payload);
+  await controller.fetch();
+  zipCodeInitialValues.value = {};
+  closeEditModal();
+};
 </script>
 
 <template>
   <Table :columns="columns" :controller="controller" />
+  <Modal
+    title="Edit"
+    :close="closeEditModal"
+    :show="openEditModal"
+    :name-form="editZipCodeForm"
+    action-label="Save"
+    :open="openEdit"
+  >
+    <Form
+      :validation-schema="createZipCodeValidations"
+      @submit="editZipCodeOnSubmit"
+      :id="editZipCodeForm"
+      :initial-values="zipCodeInitialValues"
+    >
+      <div class="flex flex-row space-x-4">
+        <div class="basis-3/3 space-y-2">
+          <Input name="zipCode" placeholder="Enter your name" type="text" />
+          <Input name="country" placeholder="Enter your country" type="text" />
+          <Input name="city" placeholder="Enter your city" type="text" />
+          <Input name="state" placeholder="Enter your state" type="text" />
+          <Input
+            name="latitude"
+            placeholder="Enter your latitude"
+            type="text"
+          />
+          <Input
+            name="longitude"
+            placeholder="Enter your longitude"
+            type="text"
+          />
+          <Input
+            name="observations"
+            placeholder="Enter your observation"
+            type="text"
+          />
+        </div>
+      </div>
+    </Form>
+  </Modal>
 </template>
 
 <style scoped></style>
